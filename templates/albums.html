@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>ALBUM LIST</title>
+</head>
+<body>
+    <h1>Albums</h1>
+
+    <strong>
+        {% for album in albums_in_html %}
+        
+        <a href="/singlealbum/{{album.id}}">
+            <li>{{ album.title }}</li>
+        </a>
+        
+        
+        {% endfor %}
+    </strong>
+
+</body>
+</html>

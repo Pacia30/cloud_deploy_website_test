@@ -1,6 +1,6 @@
 from lib.database_connection import get_flask_database_connection
-from lib.book_repository import BookRepository
-from lib.book import Book
+from lib.album_repository import AlbumRepository
+from lib.album import Album
 from flask import request, render_template, redirect, url_for
 
 # You won't need to nest your routes in app.py in a method like this
@@ -10,7 +10,7 @@ def apply_example_routes(app):
     @app.route('/books', methods=['GET'])
     def get_books():
         connection = get_flask_database_connection(app)
-        repository = BookRepository(connection)
+        repository = AlbumRepository(connection)
         books = repository.all()
 
         return render_template('books/index.html', books=books)
@@ -18,7 +18,7 @@ def apply_example_routes(app):
     @app.route('/api/books', methods=['GET'])
     def get_boots_api():
         connection = get_flask_database_connection(app)
-        repository = BookRepository(connection)
+        repository = AlbumRepository(connection)
 
         books = repository.all_json()
         return books
@@ -28,7 +28,7 @@ def apply_example_routes(app):
     @app.route('/books/<int:id>', methods=['GET'])
     def get_book(id):
         connection = get_flask_database_connection(app)
-        repository = BookRepository(connection)
+        repository = AlbumRepository(connection)
         book = repository.find(id)
         return render_template('books/show.html', book=book)
 
@@ -46,7 +46,7 @@ def apply_example_routes(app):
     def create_book():
         # Set up the database connection and repository
         connection = get_flask_database_connection(app)
-        repository = BookRepository(connection)
+        repository = AlbumRepository(connection)
 
         # Get the fields from the request form
         title = request.form['title']
@@ -71,7 +71,7 @@ def apply_example_routes(app):
     @app.route('/books/<int:id>/delete', methods=['POST'])
     def delete_book(id):
         connection = get_flask_database_connection(app)
-        repository = BookRepository(connection)
+        repository = AlbumRepository(connection)
         repository.delete(id)
 
         # Typically we use the `url_for` function in Flask to generate URLs
