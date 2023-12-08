@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from lib.database_connection import get_flask_database_connection
 from lib.album import Album
 from lib.album_repository import AlbumRepository
@@ -24,7 +24,6 @@ def get_one_album(id):
     artist_in_route = artist_repo.find(album_in_route.artist_id)
     return render_template('single_album.html', album_in_html=album_in_route, artist=artist_in_route)
 
-
 @app.route('/albums', methods=['GET'])
 def get_albums():
     connection = get_flask_database_connection(app)
@@ -32,29 +31,84 @@ def get_albums():
     albums_in_route = repo.all()
     return render_template('albums.html', albums_in_html=albums_in_route)
 
+@app.route('/artists', methods=['GET'])
+def get_artists():
+    connection = get_flask_database_connection(app)
+    repo = ArtistRepository(connection)
+    artist_in_route = repo.all()
+    return render_template('artist.html', artist_in_html=artist_in_route)
+
 # @app.route('/albums', methods=['GET'])
 # def get_all_album_names():
 #     connection = get_flask_database_connection(app)
 #     repo = AlbumRepository(connection)
 #     Albums = repo.all()
 #     return ", ".join([Album.title for Album in Albums])
-    
+
+@app.route('/albums/new', methods=['GET'])
+def new_album():
+    return render_template('create_album.html')
+@app.route('/artists/new', methods=['GET'])
+def new_artist():
+    return render_template('create_artist.html')
+###NOT DONE YET
+# @app.route('/books', methods=['POST'])
+# def create_artists():
+#         # Set up the database connection and repository
+#         connection = get_flask_database_connection(app)
+#         repository = AlbumRepository(connection)
+
+#         # Get the fields from the request form
+#         title = request.form['title']
+#         author_name = request.form['artist_id']
+#         artist_name = request.form['name']
+#         artist_id = None
+#         # for artist in artist_repo:
+#         #         if artist.name == artist_name
+#         #             artist_id = artist.id
+#         # Create a book object
+#         book = Album(None, title, author_name, artist_id)
+#         id=artist_id
+#         # artist = Artist(id, name, genre)
+
+#         # Check for validity and if not valid, show the form again with errors
+#         if not book.is_valid():
+#             return render_template('books/new.html', book=book, errors=book.generate_errors()), 400
+
+#         # Save the book to the database
+#         book = repository.create(book)
+
+#we need to call artist create if artist does not exist
+#we need use to input title, release_year, and artist name
 @app.route('/albums', methods=['POST'])
 def add_album():
     title = request.form['title']
-    release_year = request.form['release_year']
-    artist_id = request.form['artist_id']
-    
-    sub_connection = get_flask_database_connection(app)
+    release_year = int(request.form['release_year'])
+    artist_name = request.form['name']
 
+    sub_connection = get_flask_database_connection(app)
     repo = AlbumRepository(sub_connection)
-    repo.create(Album(None, title, release_year, artist_id))
-    albums = repo.all()
+    artist_repo = ArtistRepository(sub_connection)
+
+    artist_id = None
+    for artist in artist_repo.all():
+        if artist_name == artist.name:
+            artist_id = artist.id
+            repo.create(Album(None, title, release_year, artist_id))
+            return "Album added"
+
     
-    response = ""
-    for album in albums:
-        response += f"{album}\n"
-    return response
+    # if artist_name not in artists(database):
+    #     return  
+    #     artist_repo.create(None,artist_name,genre)
+    
+    # albums = repo.all()
+    
+    # return redirect(f"/singlealbum/{album.id}")
+    # response = ""
+    # for album in albums:
+    #     response += f"{album}\n"
+    # return response
 
 
 @app.route('/artists', methods=['GET'])

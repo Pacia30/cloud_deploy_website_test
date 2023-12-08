@@ -32,6 +32,9 @@ def test_album_link(page, test_web_address, db_connection):
     p1_tag = page.locator("p1")
     expect(p1_tag).to_have_text("1988")
     
+def test_add_new_album(page, test_web_address, db_connection):
+    
+
 
 # === Example Code Below ===
 

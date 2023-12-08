@@ -1,7 +1,11 @@
+import os
 from lib.database_connection import get_flask_database_connection
 from lib.album_repository import AlbumRepository
 from lib.album import Album
-from flask import request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for
+
+
+app = Flask(__name__)
 
 # You won't need to nest your routes in app.py in a method like this
 def apply_example_routes(app):
@@ -50,10 +54,16 @@ def apply_example_routes(app):
 
         # Get the fields from the request form
         title = request.form['title']
-        author_name = request.form['author_name']
-
+        author_name = request.form['artist_id']
+        artist_name = request.form['name']
+        artist_id = None
+        # for artist in artist_repo:
+        #         if artist.name == artist_name
+        #             artist_id = artist.id
         # Create a book object
-        book = Book(None, title, author_name)
+        book = Album(None, title, author_name, artist_id)
+        id=artist_id
+        # artist = Artist(id, name, genre)
 
         # Check for validity and if not valid, show the form again with errors
         if not book.is_valid():
